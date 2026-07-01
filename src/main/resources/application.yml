@@ -1,0 +1,56 @@
+server:
+  port: ${IAM_CLIENT_PORT:9090}
+  servlet:
+    context-path: /iam-test-client
+  forward-headers-strategy: ${IAM_CLIENT_FORWARD_HEADERS_STRATEGY:none}
+
+spring:
+  application:
+    name: iam-oidc-client
+
+  thymeleaf:
+    cache: false
+
+logging:
+  level:
+    org:
+      springframework:
+        security: INFO
+        oauth2: INFO
+        web:
+          client:
+            RestClient: INFO
+
+iam-test-client:
+  oauth2:
+    # Used when the login form only asks for issuer + scopes
+    client-id: ${IAM_CLIENT_ID:client}
+
+    # Leave empty for public PKCE clients
+    client-secret: ${IAM_CLIENT_SECRET:secret}
+
+    # Default issuer shown in the home page
+    default-issuer: ${IAM_CLIENT_ISSUER:http://localhost:8080/}
+
+    # Default scopes shown in the home page
+    default-scopes: ${IAM_CLIENT_SCOPES:openid profile email offline_access}
+
+    # Default audience
+    default-resource: ${IAM_CLIENT_RESOURCE:}
+
+    # Optional: fallback redirect URI template
+    # Final URL will be:
+    # http://localhost:8080/iam-test-client/login/oauth2/code/dynamic
+    redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+    # Dynamic registration id used internally by Spring Security
+    registration-id: dynamic
+
+    # Whether to call UserInfo after login
+    call-userinfo: ${IAM_CLIENT_CALL_USERINFO:true}
+
+    # Whether to call token introspection if the provider exposes an endpoint
+    call-introspection: ${IAM_CLIENT_CALL_INTROSPECTION:true}
+
+    # Whether to hide the content of the received tokens
+    hide-tokens: ${IAM_CLIENT_HIDE_TOKENS:false}

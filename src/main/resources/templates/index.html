@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>IAM Test Client</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container">
+    <h1>IAM Test Client</h1>
+
+    <form th:action="@{/login/start}" th:object="${form}" method="post" class="card">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+        <label for="issuer">Issuer</label>
+        <input id="issuer"
+               type="text"
+               th:field="*{issuer}"
+               placeholder="http://localhost:8080/"
+               required>
+
+        <label for="scopes">Requested scopes</label>
+        <input id="scopes"
+               type="text"
+               th:field="*{scopes}"
+               required>
+
+        <button type="submit">Login</button>
+    </form>
+</main>
+</body>
+</html>
