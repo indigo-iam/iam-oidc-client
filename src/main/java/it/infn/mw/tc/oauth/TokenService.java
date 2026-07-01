@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 package it.infn.mw.tc.oauth;
 
+import java.util.Optional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
@@ -32,7 +34,7 @@ public class TokenService {
     this.properties = properties;
   }
 
-  public TokenView currentTokenView() {
+  public Optional<TokenView> currentTokenView() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     if (!(authentication instanceof OAuth2AuthenticationToken oauthToken)) {
@@ -43,7 +45,7 @@ public class TokenService {
       .loadAuthorizedClient(oauthToken.getAuthorizedClientRegistrationId(), oauthToken.getName());
 
     if (authorizedClient == null) {
-      throw new IllegalStateException("OAuth2AuthorizedClient not found");
+      return Optional.empty();
     }
 
     String accessToken = authorizedClient.getAccessToken() != null
@@ -67,11 +69,11 @@ public class TokenService {
         properties.callIntrospection() ? introspectionService.introspect(authorizedClient)
             : "Introspection disabled";
 
-    return new TokenView(
-        authorizedClient.getClientRegistration().getProviderDetails().getIssuerUri(),
-        authorizedClient.getClientRegistration().getScopes().toString(), accessToken,
-        jwtDecoderService.decode(accessToken), idToken, jwtDecoderService.decode(idToken),
-        refreshToken, jwtDecoderService.decode(refreshToken), userInfo, introspection,
-        properties.hideTokens());
+    return Optional.of(
+        new TokenView(authorizedClient.getClientRegistration().getProviderDetails().getIssuerUri(),
+            authorizedClient.getClientRegistration().getScopes().toString(), accessToken,
+            jwtDecoderService.decode(accessToken), idToken, jwtDecoderService.decode(idToken),
+            refreshToken, jwtDecoderService.decode(refreshToken), userInfo, introspection,
+            properties.hideTokens()));
   }
 }

@@ -31,7 +31,8 @@ public class SecurityConfig {
 
   @Bean
   SecurityFilterChain securityFilterChain(HttpSecurity http,
-      DynamicClientRegistrationRepository clientRegistrationRepository) throws Exception {
+      DynamicClientRegistrationRepository clientRegistrationRepository,
+      OAuth2AuthorizedClientService authorizedClientService) throws Exception {
 
     var authorizationRequestResolver = new DefaultOAuth2AuthorizationRequestResolver(
         clientRegistrationRepository, "/oauth2/authorization");
@@ -47,6 +48,7 @@ public class SecurityConfig {
       .oauth2Login(oauth -> oauth
         .authorizationEndpoint(
             endpoint -> endpoint.authorizationRequestResolver(authorizationRequestResolver))
+        .authorizedClientService(authorizedClientService)
         .defaultSuccessUrl("/result", true))
       .logout(logout -> logout.logoutSuccessUrl("/")
         .invalidateHttpSession(true)

@@ -34,6 +34,10 @@
         <button type="submit">Logout</button>
     </form>
 
+    <div th:if="${message}" class="info">
+        <span th:text="${message}"></span>
+    </div>
+
     <section class="card">
         <h2>Issuer</h2>
         <pre><code class="language-plaintext" th:text="${tokenView.issuer}"></code></pre>
