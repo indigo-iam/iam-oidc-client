@@ -21,6 +21,47 @@ IAM OIDC Client is a lightweight, web-based OpenID Connect client designed to te
 - Spring Security
 - Thymeleaf
 
+## Client registration
+
+Before running the application, register an OAuth 2.0 / OpenID Connect client with INDIGO IAM or the identity provider identified by the configured issuer.
+
+The client registration should include the following settings:
+
+| Setting | Value |
+|---|---|
+| Grant type | `authorization_code` |
+| Response type | `code` |
+| Redirect URI | `http://localhost:9090/iam-test-client/login/oauth2/code/dynamic` |
+| Token endpoint authentication method | `client_secret_basic` or `none` (for public clients) |
+| PKCE | Enabled (`S256`) |
+| Suggested scopes | `openid profile email offline_access` |
+
+Enable the `refresh_token` grant type if refresh tokens are required.
+
+Use the registered client ID and client secret to configure the application through the `IAM_CLIENT_ID` and `IAM_CLIENT_SECRET` environment variables.
+
+For public clients, set `IAM_CLIENT_SECRET` to an empty string.
+
+### Redirect URI
+
+The default redirect URI follows this pattern:
+
+```
+{baseUrl}/login/oauth2/code/dynamic
+```
+
+If the application is deployed on a different host, port, context path, or behind a reverse proxy, register the corresponding externally accessible redirect URI with the identity provider.
+
+For example:
+
+```
+https://oidc-client.example.org/iam-test-client/login/oauth2/code/dynamic
+```
+
+The registered redirect URI must exactly match the one used by the application during the authorization request.
+
+When deploying behind a trusted reverse proxy, configure `IAM_CLIENT_FORWARD_HEADERS_STRATEGY=framework` if forwarded headers are needed to resolve the external application URL correctly.
+
 ## Docker distribution
 
 Multi-architecture Docker images are available on [Docker Hub](https://hub.docker.com/r/indigoiam/iam-oidc-client), supporting both `linux/amd64` and `linux/arm64`.
